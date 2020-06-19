@@ -40,10 +40,14 @@ namespace SocialMedia.Api
             //Agregar dependencias
             //Automapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             //Repositories, Inyectar Dependencias
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IPostRepository, PostRepository>();
-            //dbContext
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            //services.AddTransient<IUserRepository, UserRepository>();
+            //services.AddTransient<IPostRepository, PostRepository>();
+
+            //Configurar DbContext
             services.AddDbContext<SocialMediaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
 
             //Configurar Validation Filter y Fluent Validation

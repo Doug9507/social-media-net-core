@@ -13,7 +13,6 @@ namespace SocialMedia.Api.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        //private readonly IPostRepository _postRepository;
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
@@ -27,14 +26,6 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> GetPosts()
         {
             var posts = await _postService.GetPosts();
-
-            //var postsDTO = posts.Select(x => new PostDTO { 
-            //              PostId = x.PostId,
-            //              UserId = x.UserId,
-            //              Description = x.Description,
-            //              Date = x.Date,
-            //              Image = x.Image
-            //});
 
             var postsDTO = _mapper.Map<IEnumerable<PostDTO>>(posts);
 
@@ -84,7 +75,7 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> EditPost(int id, PostDTO postDTO)
         {
             var postDomain = _mapper.Map<Post>(postDTO);
-            postDomain.PostId = id;
+            postDomain.Id = id;
 
             var result = await _postService.EditPost(postDomain);
 

@@ -10,43 +10,41 @@ namespace SocialMedia.Core.Services
     public class PostService : IPostService
     {
 
-        private readonly IRepository<Post> _postrepository;
-        private readonly IRepository<User> _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PostService(IRepository<Post> postrepository, IRepository<User> userrepository)
+        public PostService(IUnitOfWork unitOfWork)
         {
-            _postrepository = postrepository;
-            _userRepository = userrepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<Post>> GetPosts()
         {
-            return await _postrepository.GetAll();
+            return await _unitOfWork.PostRepository.GetAll();
         }
         public async Task<Post> GetPostId(int PostId)
         {
-            return await _postrepository.GetById(PostId);
+            return await _unitOfWork.PostRepository.GetById(PostId);
         }
 
         public async Task SavePost(Post post)
         {
-            var user =  await _userRepository.GetById(post.UserId);
+            var user =  await _unitOfWork.UserRepository.GetById(post.UserId);
 
             if (user == null)
             {
                 throw new Exception("El usuario no existe");
             }
-             await _postrepository.Add(post);
+             await _unitOfWork.PostRepository.Add(post);
         }
 
         public async Task<bool> EditPost(Post post)
         {
-             await _postrepository.Update(post);
+             await _unitOfWork.PostRepository.Update(post);
             return true;
         }
         public async Task<bool> DeletePost(int PostId)
         {
-             await _postrepository.Delete(PostId);
+             await _unitOfWork.PostRepository.Delete(PostId);
             return true;
         }
     }

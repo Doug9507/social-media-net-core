@@ -41,9 +41,10 @@ namespace SocialMedia.Api
             //Automapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //Repositories, Inyectar Dependencias
+            //Repositories, Inyectar Dependencias, unit of work
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             //services.AddTransient<IUserRepository, UserRepository>();
             //services.AddTransient<IPostRepository, PostRepository>();
 

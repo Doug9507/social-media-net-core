@@ -8,7 +8,7 @@ namespace SocialMedia.Core.Interfaces
 {
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetPosts();
+        IEnumerable<Post> GetPosts();
         Task<Post> GetPostId(int PostId);
         Task SavePost(Post post);
         Task<bool> DeletePost(int PostId);

@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Interfaces
 {
-    public interface IPostRepository
+    public interface IPostRepository : IRepository<Post>
     {
-        Task<IEnumerable<Post>> GetPosts();
-        Task<Post> GetPostId(int PostId);
-        Task SavePost(Post post);
-        Task<bool> DeletePost(int PostId);
-        Task<bool> EditPost(Post post);
+        Task<IEnumerable<Post>> GetPostsByUser(int userId);
 
     }
 }

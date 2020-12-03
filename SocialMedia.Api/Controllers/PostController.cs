@@ -23,9 +23,9 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public IActionResult GetPosts()
         {
-            var posts = await _postService.GetPosts();
+            var posts =  _postService.GetPosts();
 
             var postsDTO = _mapper.Map<IEnumerable<PostDTO>>(posts);
 
@@ -34,7 +34,7 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{PostId}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetPostId(int id)
         {
             var post = await _postService.GetPostId(id);
@@ -58,7 +58,7 @@ namespace SocialMedia.Api.Controllers
             var response = new ApiResponse<PostDTO>(postDTO);
 
             
-            return Ok(postDTO);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]

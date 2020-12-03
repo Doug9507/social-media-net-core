@@ -34,8 +34,10 @@ namespace SocialMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //Deshabilitar validaciones implicitas, para el uso de Fluent Validation
-            services.AddControllers();
+            //services.AddControllers();
             //.ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true));
+            //Registramos el filtro global de excepciones
+            services.AddControllers(options => { options.Filters.Add<GlobalExceptionFilter>(); });
 
             //Agregar dependencias
             //Automapper
@@ -45,8 +47,9 @@ namespace SocialMedia.Api
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            //services.AddTransient<IUserRepository, UserRepository>();
             //services.AddTransient<IPostRepository, PostRepository>();
+            //services.AddTransient<IUserRepository, UserRepository>();
+
 
             //Configurar DbContext
             services.AddDbContext<SocialMediaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));

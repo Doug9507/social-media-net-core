@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
@@ -57,6 +58,8 @@ namespace SocialMedia.Api
             //Configurar DbContext
             services.AddDbContext<SocialMediaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
 
+            //Pagination Options
+            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
             //Configurar Swagger
             services.AddSwaggerGen(opt=> {
                 opt.SwaggerDoc("v1", new OpenApiInfo() { Title = "Social Media Api", Version = "v1" });

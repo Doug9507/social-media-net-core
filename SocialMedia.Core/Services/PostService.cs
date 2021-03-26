@@ -26,7 +26,7 @@ namespace SocialMedia.Core.Services
 
         public PagedList<Post> GetPosts(PostQueryFilter postQueryFilter)
         {
-            postQueryFilter.PageNumber = postQueryFilter.PageNumber == 0 ? _options.DefaultPageNumber : postQueryFilter.PageSize;
+            postQueryFilter.PageNumber = postQueryFilter.PageNumber == 0 ? _options.DefaultPageNumber : postQueryFilter.PageNumber;
             postQueryFilter.PageSize = postQueryFilter.PageSize == 0 ? _options.DefaultPageSize : postQueryFilter.PageSize;
 
             var posts =  _unitOfWork.PostRepository.GetAll();

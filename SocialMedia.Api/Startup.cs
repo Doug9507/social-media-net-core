@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
@@ -42,6 +45,8 @@ namespace SocialMedia.Api
             //.ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true));
             //Registramos el filtro global de excepciones
             services.AddControllers(options => { options.Filters.Add<GlobalExceptionFilter>(); });
+            //Configuracion para evitar la referencia circular usando el paquete NewtonsoftJson
+            //.AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             //Agregar dependencias
             //Automapper
@@ -53,6 +58,7 @@ namespace SocialMedia.Api
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             //services.AddTransient<IPostRepository, PostRepository>();
             //services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IAuthService, AuthService>();
 
 
             //Configurar DbContext
@@ -67,6 +73,23 @@ namespace SocialMedia.Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory,xmlFile);
                 opt.IncludeXmlComments(xmlPath);
             });
+
+            //Configurar Auth
+            services.AddAuthentication(opt => {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt => {
+                opt.TokenValidationParameters = new TokenValidationParameters(){
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"])),
+                    ValidIssuer = Configuration["Authentication:Issuer"],
+                    ValidAudience = Configuration["Authentication:Audience"] 
+                };
+            });
+
 
             //Configurar Validation Filter y Fluent Validation
             //services.AddMvc(options => options.Filters.Add<ValidationFilter>())
@@ -90,6 +113,7 @@ namespace SocialMedia.Api
             });
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
